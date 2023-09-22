@@ -33,8 +33,5 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function() {
 
 });
 
-Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function() {
-    Route::post('summary/prompt', [\App\Http\Controllers\SummaryController::class, 'prompt'])->name('summary.prompt'); 
 
-});
 require __DIR__.'/auth.php';
