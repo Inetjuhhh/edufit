@@ -33,5 +33,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function() {
 
 });
 
+Route::group(['prefix' => 'dashboard', 'middleware' => 'auth'], function() {
+    Route::post('/doAIprompt', [\App\Http\Controllers\ApiController::class, 'doAIprompt'])->name('doAIprompt'); 
+});
 
 require __DIR__.'/auth.php';

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class ApiController extends Controller
 {
@@ -28,26 +29,23 @@ class ApiController extends Controller
         
         $OPENAI_API_KEY = env('OPENAI_API_KEY');
         
-        $client = new Client();
+        // $client = new Client();
 
         // Make a POST request to the OpenAI API
-        $response = $client->post('https://api.openai.com/v1/engines/davinci-codex/completions', [
-            'headers' => [
+        $response = Http::timeout(60)
+            ->withHeaders([
                 'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
-            ],
-            'json' => [
-                'prompt' => $prompt,
-                'max_tokens' => 50, // You can adjust this as needed
-            ],
+                'Content-Type' => 'application/json',
+            ])->post('https://api.openai.com/v1/chat/completions',[
+                'model' => "gpt-3.5-turbo",
+                // 'model' => "text-davinci-003",
+                'messages' => [["role" => "user", "content" => $prompt]]
         ]);
 
         // Parse the API response
         $result = json_decode($response->getBody(), true);
-
-        // Get the generated text from the response
-        $generatedText = $result['choices'][0]['text'];
-
-        // You can return the generated text as a JSON response
-        return response()->json(['response' => $generatedText]);
+        $summary = $result['choices'][0]['message']['content'];
+ 
+        return view('dashboard/summary/summary')->with('summary', $summary);
     }
 }
