@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use GuzzleHttp\Client;
+use Guzzle\Stream\PhpStreamRequestFactory;
+use GuzzleHttp\RequestOptions;
+use Psr\Http\Message\StreamInterface;
 
 class ApiController extends Controller
 {
@@ -26,26 +31,32 @@ class ApiController extends Controller
                     ". Het kennisniveau van de personen is ". $experience . 
                     ". Het moet te lezen zijn in ongeveer " . $time . 
                     " en begint met een inhoudsopgave, daarna een inleiding over het onderwerp en is vervolgens ingedeeld in hoofdstukken, waaronder puntsgewijs belangrijke informatie is uitgewerkt. . Na elk hoofdstuk volgen één of meerdere voorbeelden van de toegepaste kennis. De samenvatting eindigt met een puntsgewijze samenvatting van de hoofdpunten.";
-        
+        $input = "Wanneer begint de winter?";
         $OPENAI_API_KEY = env('OPENAI_API_KEY');
         
-        // $client = new Client();
-
-        // Make a POST request to the OpenAI API
-        $response = Http::timeout(60)
-            ->withHeaders([
-                'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
-                'Content-Type' => 'application/json',
-            ])->post('https://api.openai.com/v1/chat/completions',[
-                'model' => "gpt-3.5-turbo",
-                // 'model' => "text-davinci-003",
-                'messages' => [["role" => "user", "content" => $prompt]]
+       
+        $client = new Client([
+            'base_uri' => 'https://api.openai.com/v1/', 
+            'stream' => true
         ]);
 
-        // Parse the API response
-        $result = json_decode($response->getBody(), true);
-        $summary = $result['choices'][0]['message']['content'];
- 
-        return view('dashboard/summary/summary')->with('summary', $summary);
+        $response = $client->post('https://api.openai.com/v1/chat/completions', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+                'Content-Type' => 'application/json',
+            ], 
+            'json' => [
+                'model' => "gpt-3.5-turbo",
+                'messages' => [["role" => "user", "content" => $input]],
+                'stream' => true,
+                'temperature' => 0 
+            ], 
+        ]);
+        
+                
+        $body = $response->getBody();
+        while (!$body->eof()) {
+            echo $body->read(1024);
+        }
     }
 }
