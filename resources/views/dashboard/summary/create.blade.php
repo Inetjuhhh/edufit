@@ -16,8 +16,7 @@
         
         <form id="ai_form">
             @csrf
-            <input type="hidden" id="ai_question" name="ai_question" value="Wanneer begint de zomer?">
-
+            <input type="hidden" id="ai_question" value="Wanneer wordt het herfst?">
             <div class="mb-6">
                 <label for="subject" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Onderwerp(en) (gescheiden door een komma)</label>
                 <input name="subject" type="text" id="subject" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -78,16 +77,16 @@
             const target = document.getElementById("target").value;
             const experience = document.getElementById("experience").value;
             const time = document.getElementById("time").value;
-            const prompt = `
-                Maak een samenvatting van interessante theorie.
-                Het moet in ieder geval ingaan op de volgende onderwerp(en): ${subject}.
-                Sluit het volgende uit: niets (default), ${exclude}.
-                Het resultaat is voor personen in de leeftijd ${age} op het niveau ${target}.
-                Het kennisniveau van de personen is ${experience}.
-                Het moet te lezen zijn in ongeveer ${time} en begint met een inhoudsopgave. Daarna volgt een inleiding over het onderwerp en is vervolgens ingedeeld in hoofdstukken, waaronder puntsgewijs belangrijke informatie is uitgewerkt. Na elk hoofdstuk volgen één of meerdere voorbeelden van de toegepaste kennis. De samenvatting eindigt met een puntsgewijze samenvatting van de hoofdpunten.
-                `;
-            
-            // const prompt = document.getElementById("ai_question").value;
+            // const prompt = `
+            //     Maak een samenvatting van interessante theorie.
+            //     Het moet in ieder geval ingaan op de volgende onderwerp(en): ${subject}.
+            //     Sluit het volgende uit: niets (default), ${exclude}.
+            //     Het resultaat is voor personen in de leeftijd ${age} op het niveau ${target}.
+            //     Het kennisniveau van de personen is ${experience}.
+            //     Het moet te lezen zijn in ongeveer ${time} en begint met een inhoudsopgave. Daarna volgt een inleiding over het onderwerp en is vervolgens ingedeeld in hoofdstukken, waaronder puntsgewijs belangrijke informatie is uitgewerkt. Na elk hoofdstuk volgen één of meerdere voorbeelden van de toegepaste kennis. De samenvatting eindigt met een puntsgewijze samenvatting van de hoofdpunten.
+            //     `;
+            // console.log(prompt);
+            const prompt = document.getElementById("ai_question").value;
             const ai_request_route = document.querySelector('meta[name="ai_request_route"]').content;
             const csrf_token = document.querySelector('meta[name="csrf-token"]').content;
 
@@ -101,7 +100,8 @@
                     model: "gpt-3.5-turbo",
                     messages: [{role: "user", content: prompt}],
                     stream: true,
-                    temperature: 0 
+                    temperature: 0,
+                    prompt: prompt,
                 },
             })
             .then(response => response.body)

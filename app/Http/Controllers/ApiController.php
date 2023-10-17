@@ -14,23 +14,26 @@ class ApiController extends Controller
 {
     public function doAIprompt(Request $request)
     {
-        $request->validate([
-            //
-        ]);
-        $subject = $request->subject;
-        $exclude = $request->exclude;
-        $age = $request->age;
-        $target = $request->target;
-        $experience = $request->experience;
-        $time = $request->time;
-        $prompt =   "Maak een samenvatting van interessante theorie. " .
-                    " Het moet in ieder geval ingaan op de volgende onderwerp(en):" . $subject . 
-                    " . Sluit het volgende uit: niets(default), " . $exclude . 
-                    ". Het resultaat is voor personen in de leeftijd ". $age . 
-                    " op het niveau ". $target . 
-                    ". Het kennisniveau van de personen is ". $experience . 
-                    ". Het moet te lezen zijn in ongeveer " . $time . 
-                    " en begint met een inhoudsopgave, daarna een inleiding over het onderwerp en is vervolgens ingedeeld in hoofdstukken, waaronder puntsgewijs belangrijke informatie is uitgewerkt. . Na elk hoofdstuk volgen één of meerdere voorbeelden van de toegepaste kennis. De samenvatting eindigt met een puntsgewijze samenvatting van de hoofdpunten.";
+        // $prompt = $request->prompt;
+        // $request->validate([
+        //     //
+        // ]);
+        // $subject = $request->subject;
+        // $exclude = $request->exclude;
+        // $age = $request->age;
+        // $target = $request->target;
+        // $experience = $request->experience;
+        // $time = $request->time;
+        // $prompt =   "Maak een samenvatting van interessante theorie. " .
+        //             " Het moet in ieder geval ingaan op de volgende onderwerp(en):" . $subject . 
+        //             " . Sluit het volgende uit: niets(default), " . $exclude . 
+        //             ". Het resultaat is voor personen in de leeftijd ". $age . 
+        //             " op het niveau ". $target . 
+        //             ". Het kennisniveau van de personen is ". $experience . 
+        //             ". Het moet te lezen zijn in ongeveer " . $time . 
+        //             " en begint met een inhoudsopgave, daarna een inleiding over het onderwerp en is vervolgens ingedeeld in hoofdstukken, waaronder puntsgewijs belangrijke informatie is uitgewerkt. . Na elk hoofdstuk volgen één of meerdere voorbeelden van de toegepaste kennis. De samenvatting eindigt met een puntsgewijze samenvatting van de hoofdpunten.";
+    
+        
         $input = "Wanneer begint de winter?";
         $OPENAI_API_KEY = env('OPENAI_API_KEY');
         
@@ -47,7 +50,7 @@ class ApiController extends Controller
             ], 
             'json' => [
                 'model' => "gpt-3.5-turbo",
-                'messages' => [["role" => "user", "content" => $prompt]],
+                'messages' => [["role" => "user", "content" => $input]],
                 'stream' => true,
                 'temperature' => 0 
             ], 
